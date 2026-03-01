@@ -1,0 +1,25 @@
+services:
+  # Backend API - FastAPI Web Service
+  - type: web
+    name: geoscan-backend
+    env: python
+    rootDir: backend
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "uvicorn main:app --host 0.0.0.0 --port $PORT"
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.10.0
+
+  # Frontend - Static Site
+  - type: web
+    name: geoscan-frontend
+    env: static
+    rootDir: frontend
+    buildCommand: "npm install && npm run build"
+    staticPublishPath: "./dist"
+    envVars:
+      - key: VITE_API_URL
+        fromService:
+          type: web
+          name: geoscan-backend
+          envVarKey: RENDER_EXTERNAL_URL
